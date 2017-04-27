@@ -1,0 +1,60 @@
+#注：配置文件编码使用utf-8,所以不建议用windows记事本打开，会导致配置文件不能读。
+#功能配置选择
+[basic]
+cpus        = 0       #配置程序可用cpu核心数；如果主机还有其他程序在运行，请设置合理的参数，如果设置为0，则默认使用所有核心。
+synchTime   = 10      #刷新配置文件时间：单位分钟；最小刷新时间为10分钟。***没有实现***
+goWorkGroup = 1       #并发数量，如果配置允许可以适当提高并发数(目前设置2或以上会出现崩溃)。
+putToEsBuff = 100      #批量提交数据致es 
+debug       = false   #true 开启kafka数据流debug模式，用于打印异常数据
+dataSource  = "/home/sunhaifeng/broad-sun.log" #需要分析的数据来源，目前支持从kafka和文件中读取。"kafak":从kafka数据流中读取数据；读日志文件："echat.log.2017-03-13",填写文件的绝对路径。
+# 日志数据库配置
+[logDB]
+hostname       = "192.168.1.140"
+port           = "3306"
+driver         = "mysql"
+username       = "root"
+password       = "root"
+dbname         = "goes"
+chatset        = "utf8"
+MaxConnections = 50
+#业务数据库配置
+[userDB]
+hostname       = "192.168.1.140"
+port           = "3306"
+driver         = "mysql"
+username       = "root"
+password       = "root"
+dbname         = "broadptt"
+chatset        = "utf8"
+MaxConnections = 50
+#redis 地址配置
+[redis]
+hostname = "192.168.1.140"
+port     = "6379"
+#kafka 访问地址配置
+[addressInfo]
+zookeeperaddr = "192.168.1.140:2121"        #终端通过zookeeper 访问kafka  默认为：本机127.0.0.1:2181
+esaddr        = "http://192.168.1.140:9200" #es 地址  默认为本机：http://127.0.0.1:9200
+#日志分析基础设置
+[goesServer]
+userStatisticTTL       = 24     # 单位：小时，定期清理缓存中的僵尸用户（由于日志丢失，造成的僵尸数据，目前没有生效）
+offlineInterval        = 300    # 判断用户掉线，时间间隔设置(单是：秒)；
+infoLogDetailSwitch    = 1      # 将info原始数据写入ES中，启用：1 ，关闭：0 （注：开启后应考虑磁盘空间是否满足！）***没有实现***
+dataAnalysisSwitch     = 1      # 启用日志分析程序，将分析后的数据导入ES中，启用：1，关闭：0 
+infoLogToFile          = 0      # 将接受的log日志按天写如至文件中，目前没有实现（由于目前语音数据是数据流形式，为了保存原始数据，故添加了此功能能）
+#goes日志存储位置配置
+[logConfig]
+logPath = "../log/goes.log"  #日志问题存储路径
+#####################---------------#####################
+#以下配置可动态刷新，刷新频率配置：synchTime  (目前没有实现)
+#kafka topic信息配置,注：不同的节点要配置相同的consumerGroup值
+[topics]              
+    [topics.test]
+        kafkaTopics    = "test"    # topic 名称 注：只能使用小写+数字,不能使用大写；具体要求可以看es index说明
+        consumerGroup  = "consumer" # 消费组名称
+#排除账号
+[excludeUID]  #排除一下uid,这些uid不做数据统计分析；如：测试账号，监控账号。在双引号中填写uid,用;隔开 
+uids = "1000215;1000216"
+[abnormalData]
+abnormalOffline  = 300  # 节点用户每分钟掉线超过300人次时报警
+abnormalOnline =  0.1  #  在线用户下降10%
