@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 )
 
 //每个节点数据流中日志的最新时间
@@ -62,6 +63,17 @@ func isZeroTime(node string) bool {
 	timeTmp := timeDifference(nodeNowTime, "00:00:00")
 	timeTmp = math.Abs(timeTmp)
 	if timeTmp <= 300 {
+		return true
+	}
+	return false
+}
+
+//判断是否为8点
+func isEightTime() bool {
+	nowTime := time.Now().Format("15:04:05")
+	timeTmp := timeDifference(nowTime, "08:00:00")
+	timeTmp = math.Abs(timeTmp)
+	if timeTmp <= 300 && timeTmp > 0 {
 		return true
 	}
 	return false

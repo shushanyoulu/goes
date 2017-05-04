@@ -135,6 +135,7 @@ func statisticDaiyGroupData(node string) {
 			v.statisticGroupData(gid, node)
 			v.SetGroupNewDateData(gid, nodeNowDate, nodeNowTime)
 		}
+		v.statisticGroupData(gid, node)
 		v.clearGroupStatisticData(gid)
 	}
 	groupTimeStream.Unlock()
@@ -171,6 +172,9 @@ func (g *groupStream) statisticGroupData(gid, node string) {
 	groupAction.GroupDate = strings.Replace(g.GroupDate, "/", "", -1)
 	groupAction.GroupOnlineSkof = g.onlineSkof
 	groupAction.CumulateTime = int(cumulateSkof(g.onlineSkof)) / 60
+	if groupAction.CumulateTime == 0 {
+		fmt.Println(g.onlineSkof)
+	}
 	groupAction.GroupMaxUsers = g.MaxUsers
 	groupAction.writeGroupActionToES()
 }

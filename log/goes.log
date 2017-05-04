@@ -1,0 +1,48 @@
+[GOES] 2017/05/03 14:06:10 client.go:107: Initializing new client
+[GOES] 2017/05/03 14:06:10 client.go:585: client/metadata fetching metadata for all topics from broker 192.168.1.140:9092
+[G[GOES] 2017/05/03 14:06:10 connectKafka.go:45: true <nil>
+[GOES] 2017/05/03 14:06:13 connectKafka.go:61: Processed 3220 events.
+[GOES] 2017/05/03 14:06:13 connectKafka.go:62: map[test:map[0:2292182] dev:map[0:2294749]]
+[GOES] 2017/05/03 14:06:13 goes.go:65: over
+ized new client
+[GOES] 2017/05/03 14:06:10 consumer_group.go:237: [consumer/7e2261aa599e] Consumer instance registered (deepin:8bd09fa8-0d87-480d-892d-7e2261aa599e).
+[GOES] 2017/05/03 14:06:10 consumer_group.go:237: [consumer/7e2261aa599e] Currently registered consumers: 1
+[GOES] 2017/05/03 14:06:10 consumer_group.go:237: [consumer/7e2261aa599e] dev :: Started topic consumer
+[GOES] 2017/05/03 14:06:10 consumer_group.go:237: [consumer/7e2261aa599e] test :: Started topic consumer
+[GOES] 2017/05/03 14:06:10 consumer_group.go:237: [consumer/7e2261aa599e] test :: Claiming 1 of 1 partitions
+[GOES] 2017/05/03 14:06:10 consumer_group.go:237: [consumer/7e2261aa599e] dev :: Claiming 1 of 1 partitions
+[GOES] 2017/05/03 14:06:10 consumer_group.go:237: [consumer/7e2261aa599e] test/0 :: Partition consumer starting at offset 2290443.
+[GOES] 2017/05/03 14:06:10 broker.go:139: Connected to broker at 192.168.1.140:9092 (registered as #0)
+[GOES] 2017/05/03 14:06:10 consumer_group.go:237: [consumer/7e2261aa599e] dev/0 :: Partition consumer starting at offset 2293270.
+[GOES] 2017/05/03 14:06:10 consumer.go:628: consumer/broker/0 added subscription to test/0
+[GOES] 2017/05/03 14:06:10 consumer.go:628: consumer/broker/0 added subscription to dev/0
+[GOES] 2017/05/03 14:06:10 consumer.go:654: consumer/broker/0 abandoned subscription to test/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:10 consumer.go:654: consumer/broker/0 abandoned subscription to dev/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:11 consumer.go:628: consumer/broker/0 added subscription to test/0
+[GOES] 2017/05/03 14:06:11 consumer.go:654: consumer/broker/0 abandoned subscription to test/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:11 consumer.go:628: consumer/broker/0 added subscription to dev/0
+[GOES] 2017/05/03 14:06:12 consumer.go:654: consumer/broker/0 abandoned subscription to dev/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:12 consumer.go:628: consumer/broker/0 added subscription to test/0
+[GOES] 2017/05/03 14:06:12 consumer.go:654: consumer/broker/0 abandoned subscription to test/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:12 consumer.go:628: consumer/broker/0 added subscription to test/0
+[GOES] 2017/05/03 14:06:12 consumer.go:654: consumer/broker/0 abandoned subscription to test/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:12 consumer.go:628: consumer/broker/0 added subscription to dev/0
+[GOES] 2017/05/03 14:06:13 consumer.go:654: consumer/broker/0 abandoned subscription to dev/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:13 consumer.go:628: consumer/broker/0 added subscription to test/0
+[GOES] 2017/05/03 14:06:13 consumer.go:654: consumer/broker/0 abandoned subscription to test/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:13 consumer.go:628: consumer/broker/0 added subscription to dev/0
+[GOES] 2017/05/03 14:06:13 consumer_group.go:237: [consumer/7e2261aa599e] test/0 :: Stopping partition consumer at offset 2292182
+[GOES] 2017/05/03 14:06:13 consumer_group.go:237: [consumer/7e2261aa599e] test/0 :: Last processed offset: 2292053. Waiting up to 20s for another 129 messages to process...
+[GOES] 2017/05/03 14:06:13 consumer_group.go:237: [consumer/7e2261aa599e] dev/0 :: Stopping partition consumer at offset 2294749
+[GOES] 2017/05/03 14:06:13 consumer_group.go:237: [consumer/7e2261aa599e] dev/0 :: Last processed offset: 2294621. Waiting up to 20s for another 128 messages to process...
+[GOES] 2017/05/03 14:06:13 consumer.go:654: consumer/broker/0 abandoned subscription to dev/0 because consuming was taking too long
+[GOES] 2017/05/03 14:06:13 consumer.go:628: consumer/broker/0 added subscription to test/0
+[GOES] 2017/05/03 14:06:13 consumer.go:634: consumer/broker/0 closed dead subscription to test/0
+[GOES] 2017/05/03 14:06:13 consumer.go:628: consumer/broker/0 added subscription to dev/0
+[GOES] 2017/05/03 14:06:13 consumer.go:634: consumer/broker/0 closed dead subscription to dev/0
+[GOES] 2017/05/03 14:06:13 consumer_group.go:237: [consumer/7e2261aa599e] dev :: Stopped topic consumer
+[GOES] 2017/05/03 14:06:13 consumer_group.go:237: [consumer/7e2261aa599e] test :: Stopped topic consumer
+[GOES] 2017/05/03 14:06:13 consumer_group.go:237: [consumer/7e2261aa599e] Deregistered consumer instance deepin:8bd09fa8-0d87-480d-892d-7e2261aa599e.
+[GOES] 2017/05/03 14:06:13 client.go:174: Closing Client
+[GOES] 2017/05/03 14:06:13 broker.go:177: Closed connection to broker 192.168.1.140:9092
+[GOES] 2017/05/03 14:06:13 broker.go:177: Closed connection to broker 192.168.1.140:9092
