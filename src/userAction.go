@@ -60,78 +60,74 @@ var getMicTimeStream = struct {
 }{m: make(map[string]singleUserGetMicTimeStream)}
 
 func (s *infoLogStu) singleUserOnlineAction() {
-	// if s.uid == "383" {
-	// 	fmt.Println("数据流", s)
-	// 	fmt.Println("缓存数据", onlineTimeStream.m[s.uid])
-	// }
-	var singleTime singleUserOnlineTimeStream
-	onlineTimeStream.Lock()
-	if _, ok := onlineTimeStream.m[s.uid]; ok { //账号已存在
-		singleTime = onlineTimeStream.m[s.uid]
-	}
-	onlineTimeStream.m[s.uid] = singleTime //账号不存在，初始化
-	switch s.stu {
-	case "LOGIN", "RELOGIN", "JOIN GROUP", "GET MIC", "RELEASE MIC", "QUERY MEMBERS", "QUERY USER", "QUERY GROUP", "LEAVE GROUP", "LOSTMIC AUTO": //
-		if singleTime.IsOnline == false { //账号不在线
-			if singleTime.isReLogin == false { //首次登陆
-				singleTime.LoginDate = s.dt[:10] //赋予登录日期
-				singleTime.LoginTime = s.dt
-				singleTime.IsOnline = true  //登录状态更新为在线
-				singleTime.isReLogin = true //已经登录
-			} else { //再次登陆
-				singleTime.LoginTime = s.dt
-				singleTime.IsOnline = true
-				singleTime.isReLogin = true                                        //已经登录
-				reloginTimeSkof := dateTimeDifference(singleTime.LogoutTime, s.dt) //本次登录和最近一次退出的时间差
-				if reloginTimeSkof > 1800 {
-					singleTime.SkofTag = true
-				} else {
-					singleTime.SkofTag = false
+	if s.uid != "" {
+		// 	fmt.Println("数据流", s)
+		// 	fmt.Println("缓存数据", onlineTimeStream.m[s.uid])
+		// }
+		var singleTime singleUserOnlineTimeStream
+		onlineTimeStream.Lock()
+		if _, ok := onlineTimeStream.m[s.uid]; ok { //账号已存在
+			singleTime = onlineTimeStream.m[s.uid]
+		}
+		onlineTimeStream.m[s.uid] = singleTime //账号不存在，初始化
+		switch s.stu {
+		case "LOGIN", "RELOGIN", "JOIN GROUP", "GET MIC", "RELEASE MIC", "QUERY MEMBERS", "QUERY USER", "QUERY GROUP", "LEAVE GROUP", "LOSTMIC AUTO": //
+			if singleTime.IsOnline == false { //账号不在线
+				if singleTime.isReLogin == false { //首次登陆
+					singleTime.LoginDate = s.dt[:10] //赋予登录日期
+					singleTime.LoginTime = s.dt
+					singleTime.IsOnline = true  //登录状态更新为在线
+					singleTime.isReLogin = true //已经登录
+				} else { //再次登陆
+					singleTime.LoginTime = s.dt
+					singleTime.IsOnline = true
+					singleTime.isReLogin = true                                        //已经登录
+					reloginTimeSkof := dateTimeDifference(singleTime.LogoutTime, s.dt) //本次登录和最近一次退出的时间差
+					if reloginTimeSkof > 1800 {
+						singleTime.SkofTag = true
+					} else {
+						singleTime.SkofTag = false
+					}
 				}
+				singleTime.node = s.node
+				onlineTimeStream.m[s.uid] = singleTime
 			}
+		case "LOGOUT", "LOGOUT BROKEN":
+			singleTime.LogoutTime = s.dt
+			lenOfSkof := len(singleTime.Skof)
+			if singleTime.LoginTime == "" { //无登录信息
+				singleTime.LoginDate = s.dt[:10]
+				singleTime.LoginTime = s.dt[:10] + " 00:00:00"
+				if singleTime.isReLogin == false || lenOfSkof == 0 {
+					singleTime.Skof = []string{singleTime.LoginTime + "--" + singleTime.LogoutTime}
+				} else if lenOfSkof == 1 {
+					lastSkof := singleTime.Skof[0]
+					loginTimeOfLastSkof := strings.Split(lastSkof, "--")[0]
+					singleTime.Skof = []string{loginTimeOfLastSkof + "--" + singleTime.LogoutTime}
+				} else {
+					lastSkof := singleTime.Skof[lenOfSkof-1]
+					loginTimeOfLastSkof := strings.Split(lastSkof, "--")[0]
+					singleTime.Skof = append(singleTime.Skof, (loginTimeOfLastSkof + "--" + singleTime.LogoutTime))
+				}
+			} else if singleTime.SkofTag == true {
+				singleTime.Skof = append(singleTime.Skof, (singleTime.LoginTime + "--" + singleTime.LogoutTime))
+			} else if lenOfSkof == 0 {
+				singleTime.Skof = []string{singleTime.LoginTime + "--" + singleTime.LogoutTime}
+			} else if lenOfSkof == 1 {
+				singleTime.Skof = []string{strings.Split(singleTime.Skof[0], "--")[0] + "--" + singleTime.LogoutTime}
+			} else {
+				intime := strings.Split(singleTime.Skof[lenOfSkof-1], "--")[0]
+				singleTime.Skof = append(singleTime.Skof[:lenOfSkof-1], (intime + "--" + singleTime.LogoutTime))
+			}
+			singleTime.IsOnline = false
 			singleTime.node = s.node
 			onlineTimeStream.m[s.uid] = singleTime
 		}
-	case "LOGOUT", "LOGOUT BROKEN":
-		singleTime.LogoutTime = s.dt
-		lenOfSkof := len(singleTime.Skof)
-		if singleTime.LoginTime == "" { //无登录信息
-			singleTime.LoginDate = s.dt[:10]
-			singleTime.LoginTime = s.dt[:10] + " 00:00:00"
-			if singleTime.isReLogin == false || lenOfSkof == 0 {
-				singleTime.Skof = []string{singleTime.LoginTime + "--" + singleTime.LogoutTime}
-			} else if lenOfSkof == 1 {
-				lastSkof := singleTime.Skof[0]
-				loginTimeOfLastSkof := strings.Split(lastSkof, "--")[0]
-				singleTime.Skof = []string{loginTimeOfLastSkof + "--" + singleTime.LogoutTime}
-			} else {
-				lastSkof := singleTime.Skof[lenOfSkof-1]
-				loginTimeOfLastSkof := strings.Split(lastSkof, "--")[0]
-				singleTime.Skof = append(singleTime.Skof, (loginTimeOfLastSkof + "--" + singleTime.LogoutTime))
-			}
-
-		} else if singleTime.SkofTag == true {
-			singleTime.LogoutTime = s.dt
-			singleTime.Skof = append(singleTime.Skof, (singleTime.LoginTime + "--" + singleTime.LogoutTime))
-		} else if lenOfSkof == 0 {
-			singleTime.LogoutTime = s.dt
-			singleTime.Skof = []string{singleTime.LoginTime + "--" + singleTime.LogoutTime}
-		} else if lenOfSkof == 1 {
-			singleTime.LogoutTime = s.dt
-			singleTime.Skof = []string{strings.Split(singleTime.Skof[0], "--")[0] + "--" + singleTime.LogoutTime}
-		} else {
-			singleTime.LogoutTime = s.dt
-			intime := strings.Split(singleTime.Skof[lenOfSkof-1], "--")[0]
-			singleTime.Skof = append(singleTime.Skof[:lenOfSkof-1], (intime + "--" + singleTime.LogoutTime))
-		}
-		singleTime.IsOnline = false
-		onlineTimeStream.m[s.uid] = singleTime
+		// if s.uid == "383" {
+		// 	fmt.Println(onlineTimeStream.m[s.uid])
+		// }
+		onlineTimeStream.Unlock()
 	}
-	// if s.uid == "383" {
-	// 	fmt.Println(onlineTimeStream.m[s.uid])
-	// }
-	onlineTimeStream.Unlock()
-
 }
 
 // 抢麦相关数据分析
@@ -253,8 +249,11 @@ func (v *singleUserOnlineTimeStream) changeTodayDateData(k, nodeNowDate, nodeNow
 	// v.CumulateOnlineTime += dateTimeDifference(v.LoginTime, v.LogoutTime)
 	if lenOfSkof == 0 {
 		v.Skof = []string{v.LoginTime + "--" + v.LogoutTime}
+	} else if lenOfSkof == 1 {
+		v.Skof = []string{strings.Split(v.Skof[0], "--")[0] + "--" + v.LogoutTime}
 	} else {
-		v.Skof = append(v.Skof, (v.LoginTime + "--" + v.LogoutTime))
+		inTime := strings.Split(v.Skof[lenOfSkof-1], "--")[0]
+		v.Skof = append(v.Skof[:lenOfSkof-1], inTime+"--"+v.LogoutTime)
 	}
 	v.IsOnline = false
 	onlineTimeStream.m[k] = *v

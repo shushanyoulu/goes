@@ -41,6 +41,7 @@ func analysisTopicGroup(nodesTopic map[string]topic) *kafkaStruct {
 	var topicNames []string
 	var k *kafkaStruct
 	for _, v := range nodesTopic {
+		initDailySignInMap(v.KafkaTopics)
 		topicNames = append(topicNames, v.KafkaTopics)
 		k = &kafkaStruct{topicNames, v.ConsumerGroup}
 	}
@@ -57,8 +58,8 @@ func dealTopicData() {
 	} else {
 		var eUID = setExcludeUIDMap() //要剔除的uid map
 		for logData := range dataChan {
-			logData.updateNodeLogLastTime() //更新每个节点的最新数据
-			logData.classifyNodeLog(eUID)   //开始处理节点数据
+			// logData.updateNodeLogLastTime() //更新每个节点的最新数据
+			logData.classifyNodeLog(eUID) //开始处理节点数据
 			// fmt.Println(eUID, logData)
 		}
 	}

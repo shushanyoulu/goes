@@ -21,7 +21,7 @@ var maxUsers = struct {
 	sync.RWMutex
 	m map[string]int
 }{m: make(map[string]int)}
-
+var maxUsersCopy = make(map[string]int)
 var options = &Options{
 	InitialCapacity: 1024,
 	OnWillExpire: func(key string, item *Item) {
@@ -113,4 +113,11 @@ func maxOnlineUsers(thisNum int, node string) {
 		maxUsers.m[node] = thisNum
 	}
 	maxUsers.Unlock()
+}
+
+func statisticNodeMaxOnlineUsers(node string) {
+	maxUsers.RLock()
+	maxUsersCopy[node] = maxUsers.m[node]
+	maxUsers.m[node] = 0
+	maxUsers.RUnlock()
 }

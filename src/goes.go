@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"strconv"
 	"time"
 
 	"github.com/Shopify/sarama"
+	"github.com/golang/glog"
 
+	"net/http"
 	_ "net/http/pprof"
 )
 
@@ -28,20 +31,13 @@ func init() {
 }
 
 var over = make(chan string, 10) // 运行结束通知
+
 func main() {
 	fmt.Println(time.Now())
-	// go func() { // check goes
-	// 	http.ListenAndServe("192.168.1.140:6060", nil)
-	// }()
-	// go func() {
-	// 	http.HandleFunc("/goroutines", func(w http.ResponseWriter, r *http.Request) {
-	// 		num := strconv.FormatInt(int64(runtime.NumGoroutine()), 10)
-	// 		w.Write([]byte(num))
-	// 	})
-	// 	http.ListenAndServe("192.168.1.140:6060", nil)
-	// glog.Info("goroutine stats and pprof listen on 6060")
-	// }()
+	fmt.Println("version:goes-0.4.1")
 	runtime.GOMAXPROCS(useableCPUNum()) //配置程序可用cpu数量
+
+	//这里是判断是否需要记录内存的逻辑
 	go tikers()
 	go statisticDailyData()
 	checkDataSource := configDataSource()
@@ -64,4 +60,17 @@ func runKafka() {
 	dealNode()
 	gologer.Println(<-over)
 	os.Exit(0)
+}
+func pprofMonitor() {
+	go func() { // check goes
+		http.ListenAndServe("192.168.1.140:6060", nil)
+	}()
+	go func() {
+		http.HandleFunc("/goroutines", func(w http.ResponseWriter, r *http.Request) {
+			num := strconv.FormatInt(int64(runtime.NumGoroutine()), 10)
+			w.Write([]byte(num))
+		})
+		http.ListenAndServe("192.168.1.140:6060", nil)
+		glog.Info("goroutine stats and pprof listen on 6060")
+	}()
 }

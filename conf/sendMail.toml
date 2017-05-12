@@ -1,7 +1,8 @@
 [basicInfo]
 sendServerHost = "smtp.163.com"
 sendServerPort = 25
-sendFromUser = "keryoo@163.com"
-senderPasswd = "sun123456"
-sendToUser   = "keryoo@163.com"
+sendFromUser   = "keryoo@163.com"
+senderPasswd   = "sun123456"
+sendToUser     = "keryoo@163.com"
 carbonCopyUser = "keryoo@163.com"
+sendMailTime   = "08:00:00"

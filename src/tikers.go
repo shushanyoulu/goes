@@ -13,8 +13,6 @@ func tikers() {
 		select {
 		case <-nodeSceneTimer.C: //每分钟统计在线用户数，掉线用户数，掉线比率
 			nodeScene()
-		case <-getDailyuserTiker.C: //每10分钟统计，本日已登录用户数。
-			// tikerGetNodeUsers("test")
 		}
 	}
 }

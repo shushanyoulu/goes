@@ -21,58 +21,60 @@ type dailyOnline struct {
 //每个节点当前每日已登录用户数 [nodeName][]uid
 var nodeUserHadSignIn = struct {
 	sync.RWMutex
-	m map[string][]string
-}{m: make(map[string][]string)}
+	m map[string]map[string]bool
+}{m: make(map[string]map[string]bool)}
 
 var dailyUserList = struct {
 	sync.RWMutex
 	m map[string]string
 }{m: make(map[string]string)}
 
-var getDailyuserTiker = time.NewTicker(1 * time.Minute)
+var sendSignInUsers = make(map[string]string)
+
+func initDailySignInMap(node string) {
+	nodeUserHadSignIn.Lock()
+	nodeUserHadSignIn.m[node] = make(map[string]bool)
+	nodeUserHadSignIn.Unlock()
+}
 
 //记录每日已登录用户
 func (nodeLog nodeLogData) dailyUserSignIn() {
-	node, uid := nodeLog.nodeName, analysisUID(nodeLog.data)
-	nodeUserHadSignIn.Lock()
-	// fmt.Println(node, uid, "-----")
-	nodeUserHadSignIn.m[node] = sliceNotExistAdd(nodeUserHadSignIn.m[node], uid) // 添加不存在的账号
-	nodeUserHadSignIn.Unlock()
+	if strings.Contains(nodeLog.data, "LOG") || strings.Contains(nodeLog.data, "JOIN GROUP") {
+		node, uid := nodeLog.nodeName, analysisUID(nodeLog.data)
+		if uid != "" {
+			nodeUserHadSignIn.Lock()
+			if _, ok := nodeUserHadSignIn.m[node][uid]; ok == false {
+				// fmt.Println(node, uid, "-----")
+				hadSignIntmpMap := nodeUserHadSignIn.m[node]
+				hadSignIntmpMap[uid] = true
+				nodeUserHadSignIn.m[node] = hadSignIntmpMap // 添加不存在的账号
+			}
+			nodeUserHadSignIn.Unlock()
+		}
+	}
 }
 
 //统计节点已登录用户数
 func statisticNodeUserHadSignInNumber(node string) {
 	nodeUserHadSignIn.Lock()
 	num := len(nodeUserHadSignIn.m[node])
-	nodeUserHadSignIn.m = make(map[string][]string)
+	nodeUserHadSignIn.m[node] = make(map[string]bool)
 	nodeUserHadSignIn.Unlock()
 	sendSignInUsers[node] = strconv.Itoa(num)
 }
 
 //定时获取每个节点的用户数量并将数据存入ES中
-func statisticDailyNodeHadUsersToES(node string) {
+func statisticDailyNodeHadUsersToES() {
 	var dailyUserHadSignInNum dailyOnline
 	var nodeDailySignIN string //定义每日已登录用INDEX
-	nodeUserHadSignIn.Lock()
-	for node, userNumber := range nodeUserHadSignIn.m {
-		logStreamLastTime.RLock()
-		ldate, _, err := getNodeNowDateTime(node)
-		checkerr(err)
-		logStreamLastTime.RUnlock()
-		ldate = strings.Replace(ldate, "/", "", -1)
-		dailyUserHadSignInNum = dailyOnline{node, ldate, len(userNumber)}
+	for node, userNumber := range sendSignInUsers {
+		yesterday := time.Now().AddDate(0, 0, -1).Format("20060102")
+		dailyUserHadSignInNum = dailyOnline{node, yesterday, len(userNumber)}
 		nodeDailySignIN = "daily-sign-in"
 		dailyOnlineIndex := elastic.NewBulkIndexRequest().Index(nodeDailySignIN).Type(node).Doc(dailyUserHadSignInNum) //向ES中插入daily-sign-in index，节点，时间，数量
 		bulkRequest = bulkRequest.Add(dailyOnlineIndex)
 	}
-	nodeUserHadSignIn.Unlock()
 	_, err := bulkRequest.Do(ctx)
 	checkerr(err)
-
-}
-
-func analysisDailySignInUser(node string) {
-	statisticDailyNodeHadUsersToES(node)
-	statisticNodeUserHadSignInNumber(node)
 
 }

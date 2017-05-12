@@ -55,6 +55,12 @@ logPath = "../log/goes.log"  #日志问题存储路径
     [topics.dev]
         kafkaTopics    = "dev"    # topic 名称 注：只能使用小写+数字,不能使用大写；具体要求可以看es index说明
         consumerGroup  = "consumer" # 消费组名称
+            [topics.dev1]
+        kafkaTopics    = "dev1"    # topic 名称 注：只能使用小写+数字,不能使用大写；具体要求可以看es index说明
+        consumerGroup  = "consumer" # 消费组名称
+            [topics.dev2]
+        kafkaTopics    = "dev2"    # topic 名称 注：只能使用小写+数字,不能使用大写；具体要求可以看es index说明
+        consumerGroup  = "consumer" # 消费组名称
 #排除账号
 [excludeUID]  #排除一下uid,这些uid不做数据统计分析；如：测试账号，监控账号。在双引号中填写uid,用;隔开 
 uids = "1000215;1000216"

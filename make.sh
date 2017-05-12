@@ -1,1 +1,1 @@
-go build -o bin/goes  src/*.go
+go build -o ../bin/goes  src/*.go

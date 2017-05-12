@@ -20,7 +20,6 @@ type abnormalUser struct {
 	userOnlineTime string
 }
 
-var sendSignInUsers = make(map[string]string)
 var sendAbnormalUsers = make(map[string]abnormalUser)
 
 func sendMail(str string) {
@@ -29,7 +28,7 @@ func sendMail(str string) {
 	m.SetHeader("From", sendFromUser())
 	m.SetHeader("To", senderToUser())
 	m.SetAddressHeader("Cc", carbonCopyUser(), carbonCopyUser())
-	m.SetHeader("Subject", "易洽["+time.Now().Format("2006-01-02")+"]运营报告")
+	m.SetHeader("Subject", "易洽["+time.Now().AddDate(0, 0, -1).Format("2006-01-02")+"]运营报告")
 	m.SetBody("text/html", str)
 	m.Attach("../reportFile/report.xls")
 	// Send the email to Bob, Cora and Dan.
@@ -40,19 +39,19 @@ func sendMail(str string) {
 
 // 每日已登陆用户和同时在线最大用户统计
 func statisticOnlineUserReport() string {
-	var s string
+	var tableStr string
 	tbTopic := "<table border=\"1\" cellspacing=\"0\">  <tr><td>节点</td><td>最大在线人数</td><td>今日已登陆人数</td></tr>"
-	maxUsers.RLock()
-	for node, v := range maxUsers.m {
+	for node, v := range maxUsersCopy {
 		a := sendSignInUsers[node]
-		s = s + "<tr> <td> " + node + "</td> <td>" + strconv.Itoa(v) + "</td> <td>" + a + "</td> </tr>"
+		tableStr = tableStr + "<tr> <td> " + node + "</td> <td>" + strconv.Itoa(v) + "</td> <td>" + a + "</td> </tr>"
+		sendSignInUsers[node] = ""
 	}
-	maxUsers.RUnlock()
-	str := tbTopic + s
+	str := tbTopic + tableStr
 	return str
 }
 func sendReport() {
 	createXLSReport()
+	statisticDailyNodeHadUsersToES()
 	sendMail(statisticOnlineUserReport())
 }
 func sendWarning(warningStr string) {

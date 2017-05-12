@@ -72,8 +72,8 @@ func (e eventData) insertList() {
 		checkerr(err)
 		offlineDataLastTime.Lock()
 		offlineDataLastTime.m = t.Unix()
-		w := strconv.Itoa(int(offlineDataLastTime.m))             //数据流最新时间戳
-		offlineCacheList.Set(w, NewItemWithTTL(e, 5*time.Minute)) //掉线事件缓存5分钟
+		w := strconv.Itoa(int(offlineDataLastTime.m))              //数据流最新时间戳
+		offlineCacheList.Set(w, NewItemWithTTL(e, 90*time.Second)) //掉线事件缓存2分钟
 		e.singleUserDailyOfflineTime()
 		e.singleUserOffline()
 		offlineDataLastTime.Unlock()

@@ -68,11 +68,10 @@ func isZeroTime(node string) bool {
 	return false
 }
 
-//判断是否为8点
+//判断是否为9点
 func isEightTime() bool {
 	nowTime := time.Now().Format("15:04:05")
-	timeTmp := timeDifference(nowTime, "08:00:00")
-	timeTmp = math.Abs(timeTmp)
+	timeTmp := timeDifference(nowTime, "09:00:00")
 	if timeTmp <= 300 && timeTmp > 0 {
 		return true
 	}
