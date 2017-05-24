@@ -31,7 +31,7 @@ func reckonRate() {
 	checkerr(err)
 }
 func abnormalRateAlarm(node string, a, b, r int) {
-	if r > offlineRateAlarm {
+	if r > offlineRateAlarm && a >= 10 {
 		s := node + "节点掉线率:" + strconv.Itoa(r) + "/10000；掉线人数：" + strconv.Itoa(a) +
 			"；在线人数：" + strconv.Itoa(b) + "。超过设定值：" + strconv.Itoa(offlineRateAlarm)
 		sendWarning(s)

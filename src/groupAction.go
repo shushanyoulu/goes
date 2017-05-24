@@ -28,6 +28,7 @@ type groupStream struct {
 	CumulateTime   float64         //群组活跃时间
 	Users          map[string]bool //在线人
 	MaxUsers       int             //群组最高在线人数
+	Node           string          //节点
 }
 
 var groupAction = new(singleGroupAction)
@@ -112,6 +113,7 @@ func (s infoLogStu) singleGroupStream() {
 		// if gid == "369" {
 		// fmt.Println(gid, singleTime.GroupBeginTime, singleTime.GroupOverTime, singleTime)
 		// }
+		singleTime.Node = s.node
 		groupTimeStream.m[gid] = singleTime
 		groupTimeStream.Unlock()
 	}
@@ -150,14 +152,16 @@ func statisticDaiyGroupData(node string) {
 	}
 	groupTimeStream.Lock()
 	for gid, v := range groupTimeStream.m {
-		if v.GroupIsOnline {
-			v.GroupOverTime = nodeNowDate + " " + nodeNowTime
-			v.upDateGroupTodayData(gid, v.GroupOverTime)
-			v.statisticGroupData(gid, node)
-			v.SetGroupNewDateData(gid, nodeNowDate, nodeNowTime)
-		} else {
-			v.statisticGroupData(gid, node)
-			v.clearGroupStatisticData(gid)
+		if v.Node == node {
+			if v.GroupIsOnline {
+				v.GroupOverTime = nodeNowDate + " " + nodeNowTime
+				v.upDateGroupTodayData(gid, v.GroupOverTime)
+				v.statisticGroupData(gid)
+				v.SetGroupNewDateData(gid, nodeNowDate, nodeNowTime)
+			} else {
+				v.statisticGroupData(gid)
+				v.clearGroupStatisticData(gid)
+			}
 		}
 	}
 	groupTimeStream.Unlock()
@@ -189,9 +193,9 @@ func (g *groupStream) SetGroupNewDateData(gid, nodeNowDate, nodeNowTime string) 
 	groupTimeStream.m[gid] = *g
 }
 
-func (g *groupStream) statisticGroupData(gid, node string) {
+func (g *groupStream) statisticGroupData(gid string) {
 	groupAction.Gid = gid
-	groupAction.Node = node
+	groupAction.Node = g.Node
 	groupAction.GroupDate = strings.Replace(g.GroupDate, "/", "", -1)
 	groupAction.GroupOnlineSkof = g.onlineSkof
 	groupAction.CumulateTime = int(cumulateSkof(g.onlineSkof)) / 60

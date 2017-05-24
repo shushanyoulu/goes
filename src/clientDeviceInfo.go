@@ -18,8 +18,6 @@ type userClientInfo struct {
 //用户使用终端设备的基本信息
 type deviceInfo struct {
 	Iccid           string `json:"iccid"`
-	Address         string `json:"address"`
-	IPAddr          string `json:"ipAddr"`
 	Version         string `json:"version"`
 	Version2        string `json:"version2"`
 	Platform        string `json:"Platform"`
@@ -39,23 +37,18 @@ type deviceInfo struct {
 
 func (nd nodeLogData) analysisClientDeviceInfo() {
 	if strings.Contains(nd.data, "LOGIN") && strings.Contains(nd.data, "LOGIN FAILED") == false {
-		var userClient *userClientInfo
+		var userClient userClientInfo
 		userClient = nd.getUserClientDeviceInfo()
 		userClient.clientInfoIsExist()
 	}
 }
-func (nd nodeLogData) getUserClientDeviceInfo() *userClientInfo {
-	node, log := nd.nodeName, nd.data
-	var info *userClientInfo
-	info = analysisClientInfo(log, node)
-	return info
-}
-func analysisClientInfo(line, node string) *userClientInfo {
+
+// getUserClientDeviceInfo 获取终端信息
+func (nd nodeLogData) getUserClientDeviceInfo() userClientInfo {
 	var client userClientInfo
-	_, _, l := extract(line)
+	node, log := nd.nodeName, nd.data
+	l := extractLogData(log)
 	client.userid = analysisUID(l)
-	client.IPAddr = analysisAddress(l)
-	client.Address = ipToAddr(ipParse(client.IPAddr))
 	client.Version = analysisVersion(l)
 	client.Version2 = analysisVersion2(l)
 	client.Platform = analysisPlatform(l)
@@ -69,14 +62,13 @@ func analysisClientInfo(line, node string) *userClientInfo {
 	client.SerialNumber = analysisSerialNumber(l)
 	client.Context = analysisContext(l)
 	client.ServerNode = node
-	return &client
+	return client
 }
-
 func (u *userClientInfo) clientInfoIsExist() {
 	value, err := redis.Bool(connRedis.Do("EXISTS", u.userid))
 	checkerr(err)
 	if value == true {
-		d := readClientInfoFromRedix(u.userid)
+		d := readClientInfoFromRedis(u.userid)
 		if u.deviceInfo != d {
 			u.writeClientDeviceInfoToRedis()
 			u.writeClientDeviceInfoToES()
@@ -86,7 +78,7 @@ func (u *userClientInfo) clientInfoIsExist() {
 		u.writeClientDeviceInfoToES()
 	}
 }
-func readClientInfoFromRedix(userid string) deviceInfo {
+func readClientInfoFromRedis(userid string) deviceInfo {
 	var clientInfoJSON deviceInfo
 	v, err := redis.Bytes(connRedis.Do("GET", userid))
 	err = json.Unmarshal(v, &clientInfoJSON)

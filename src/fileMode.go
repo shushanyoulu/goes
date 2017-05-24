@@ -14,6 +14,7 @@ func fileModeDataSource(s, node string) {
 	defer o.Close()
 	buf := bufio.NewReader(o)
 	// fmt.Println(time.Now(), "readFile")
+	initDailySignInMap("test")
 	for {
 		l, _ := buf.ReadString('\n')
 		if l == "" {

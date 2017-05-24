@@ -6,7 +6,7 @@ synchTime   = 10      #刷新配置文件时间：单位分钟；最小刷新时
 goWorkGroup = 1       #并发数量，如果配置允许可以适当提高并发数(目前设置2或以上会出现崩溃)。
 putToEsBuff = 100      #批量提交数据致es 
 debug       = false   #true 开启kafka数据流debug模式，用于打印异常数据
-dataSource  = "kafka" #需要分析的数据来源，目前支持从kafka和文件中读取。"kafak":从kafka数据流中读取数据；读日志文件："echat.log.2017-03-13",填写文件的绝对路径。
+dataSource  = "/home/sunhaifeng/echat.log.2017-05-15" #需要分析的数据来源，目前支持从kafka和文件中读取。"kafak":从kafka数据流中读取数据；读日志文件："echat.log.2017-03-13",填写文件的绝对路径。
 # 日志数据库配置
 [logDB]
 hostname       = "192.168.1.140"

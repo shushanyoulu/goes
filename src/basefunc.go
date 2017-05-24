@@ -24,6 +24,19 @@ func extract(line string) (string, string, string) {
 	return "", "", ""
 }
 
+// extractLogData 从log日志中提取信息数据
+func extractLogData(str string) string {
+	var infoData string
+	infoDataFormat := regexp.MustCompile(`".*`)
+	infoData = infoDataFormat.FindString(str)
+	i := len(infoData)
+	if i > 2 {
+		infoData = infoData[1 : i-1]
+		return infoData
+	}
+	return ""
+}
+
 func checkerr(err error) {
 	if err != nil {
 		// fmt.Println(err)

@@ -12,10 +12,10 @@ import (
 	"strings"
 )
 
-type dailyOnline struct {
+type dailySignIn struct {
 	Node  string `json:"节点"`
 	Ldate string `json:"时间"`
-	Sum   int    `json:"已登录人数"`
+	Sum   string `json:"已登录人数"`
 }
 
 //每个节点当前每日已登录用户数 [nodeName][]uid
@@ -65,14 +65,14 @@ func statisticNodeUserHadSignInNumber(node string) {
 
 //定时获取每个节点的用户数量并将数据存入ES中
 func statisticDailyNodeHadUsersToES() {
-	var dailyUserHadSignInNum dailyOnline
-	var nodeDailySignIN string //定义每日已登录用INDEX
+	var dailyUserHadSignInDoc dailySignIn
+	var dailySignInIndexName string //定义每日已登录用INDEX
 	for node, userNumber := range sendSignInUsers {
 		yesterday := time.Now().AddDate(0, 0, -1).Format("20060102")
-		dailyUserHadSignInNum = dailyOnline{node, yesterday, len(userNumber)}
-		nodeDailySignIN = "daily-sign-in"
-		dailyOnlineIndex := elastic.NewBulkIndexRequest().Index(nodeDailySignIN).Type(node).Doc(dailyUserHadSignInNum) //向ES中插入daily-sign-in index，节点，时间，数量
-		bulkRequest = bulkRequest.Add(dailyOnlineIndex)
+		dailyUserHadSignInDoc = dailySignIn{node, yesterday, userNumber}
+		dailySignInIndexName = "daily-sign-in"
+		signInIndex := elastic.NewBulkIndexRequest().Index(dailySignInIndexName).Type(node).Doc(dailyUserHadSignInDoc) //向ES中插入daily-sign-in index，节点，时间，数量
+		bulkRequest = bulkRequest.Add(signInIndex)
 	}
 	_, err := bulkRequest.Do(ctx)
 	checkerr(err)

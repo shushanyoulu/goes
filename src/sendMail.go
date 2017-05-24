@@ -42,8 +42,8 @@ func statisticOnlineUserReport() string {
 	var tableStr string
 	tbTopic := "<table border=\"1\" cellspacing=\"0\">  <tr><td>节点</td><td>最大在线人数</td><td>今日已登陆人数</td></tr>"
 	for node, v := range maxUsersCopy {
-		a := sendSignInUsers[node]
-		tableStr = tableStr + "<tr> <td> " + node + "</td> <td>" + strconv.Itoa(v) + "</td> <td>" + a + "</td> </tr>"
+		signInNum := sendSignInUsers[node]
+		tableStr = tableStr + "<tr> <td> " + node + "</td> <td>" + strconv.Itoa(v) + "</td> <td>" + signInNum + "</td> </tr>"
 		sendSignInUsers[node] = ""
 	}
 	str := tbTopic + tableStr

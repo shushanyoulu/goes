@@ -34,14 +34,13 @@ var over = make(chan string, 10) // 运行结束通知
 
 func main() {
 	fmt.Println(time.Now())
-	fmt.Println("version:goes-0.4.1")
+	fmt.Println("version:goes-0.4.3")
 	runtime.GOMAXPROCS(useableCPUNum()) //配置程序可用cpu数量
 
 	//这里是判断是否需要记录内存的逻辑
 	go tikers()
 	go statisticDailyData()
 	checkDataSource := configDataSource()
-	// fmt.Println(time.Now(), "beginTime")
 	if checkDataSource == "kafka" {
 		fmt.Println("从kafka数据流中读取数据！")
 		// 	//从kafka 中读取数据
