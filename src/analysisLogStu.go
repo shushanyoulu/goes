@@ -84,14 +84,16 @@ func (s *infoLogStu) analysisLogStatus(line, node string) {
 //提取info 日志中的info信息,将所有日志格式化为 uid,dateTime,stu, info
 func (s *infoLogStu) formatLogInfoData(line, stu string) {
 	logtimeFormat := regexp.MustCompile(`(?P<datetime>\d\d\d\d[-|/]\d\d[-|/]\d\d\s\d\d:\d\d:\d\d)`)
-	logdatetime := logtimeFormat.FindString(line)
+	logDateTime := logtimeFormat.FindString(line)
 	loglineFormat := regexp.MustCompile(`".*`)
 	a := loglineFormat.FindString(line)
-	if len(a)-1 > 1 {
-		logInfo := a[1 : len(a)-1]
-		logDate := strings.Fields(logdatetime)[0]
-		logTime := strings.Fields(logdatetime)[1]
-		logDateTime := logDate + " " + logTime
+	lenLogInfo := len(a)
+	lenLogDateTime := len(logDateTime)
+	if lenLogInfo > 2 && lenLogDateTime > 0 {
+		logInfo := a[1 : lenLogInfo-1]
+		// logDate := strings.Fields(logdatetime)[0]
+		// logTime := strings.Fields(logdatetime)[1]
+		// logDateTime := logDate + " " + logTime
 		s.uid = analysisUID(logInfo)
 		s.stu = stu
 		s.dt = logDateTime

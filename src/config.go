@@ -75,7 +75,8 @@ type abnormalData struct {
 	AbnormalOffline int
 }
 
-var configPath = "../conf/goes.toml"
+const configPath = "../conf/goes.toml"
+
 var configStruct config
 
 //basic

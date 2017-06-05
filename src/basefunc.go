@@ -14,7 +14,7 @@ func extract(line string) (string, string, string) {
 	logdatetime := logtimeFormat.FindString(line)
 	loglineFormat := regexp.MustCompile(`".*`)
 	a := loglineFormat.FindString(line)
-	if len(a)-1 > 1 {
+	if len(a)-1 > 1 && logdatetime != "" {
 		loginfo := a[1 : len(a)-1]
 		ldate := strings.Fields(logdatetime)[0]
 		ltime := strings.Fields(logdatetime)[1]

@@ -59,8 +59,11 @@ func extractTimeAndLog(line string) (string, string) {
 	var lDateTime string
 	logTimeFormat := regexp.MustCompile(`(?P<datetime>\d\d\d\d[-|/]\d\d[-|/]\d\d\s\d\d:\d\d:\d\d)`)
 	logDateTime := logTimeFormat.FindString(line)
-	lDateTime = strings.Fields(logDateTime)[0] + " " + strings.Fields(logDateTime)[1]
-	lDateTime = formatTimeForEs(lDateTime)
-
+	if logDateTime != "" {
+		lDateTime = strings.Fields(logDateTime)[0] + " " + strings.Fields(logDateTime)[1]
+		lDateTime = formatTimeForEs(lDateTime)
+	} else {
+		lDateTime = "2016-01-02T15:04:05+0800"
+	}
 	return lDateTime, line
 }
