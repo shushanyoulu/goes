@@ -3,6 +3,10 @@
 
 package main
 
+import (
+	"strings"
+)
+
 type dealLoger interface {
 	updateNodeLogLastTime()
 	periodOfUsersOffline()
@@ -26,4 +30,9 @@ func dealLog(d dealLoger) {
 	d.onlines()                  //在线用户
 	d.loginAndLogoutSendToEs()   //登入登出用户
 
+}
+func (n nodeLogData) pttSynchDatabase() {
+	if strings.Contains(n.data, "memory database synch") {
+		go sendDataToOther(n)
+	}
 }

@@ -16,6 +16,8 @@ var wg, waitGroup sync.WaitGroup
 var bdata *nodeLogData
 var goesModeType = configGoesDebug()
 var eUID = setExcludeUIDMap() //要剔除的uid map
+var udpAddress = configWarningDataPush()
+
 type kafkaStruct struct {
 	topicNames        []string
 	consumerGroupName string
@@ -74,7 +76,7 @@ func (nd nodeLogData) classifyNodeLog(eUID map[string]int) {
 	if _, ok := eUID[u]; ok == false { //排除不用分析账号
 		switch {
 		case strings.Contains(log, "INFO"):
-			go dealLog(nd)
+			dealLog(nd)
 		case strings.Contains(log, "DEBUG"):
 		case strings.Contains(log, "ERROR"):
 		case strings.Contains(log, "WARNING"):
@@ -87,7 +89,7 @@ func (nd nodeLogData) classifyNodeLog(eUID map[string]int) {
 
 // 将warning数据发送给外部处理模块
 func sendDataToOther(nd nodeLogData) {
-	conn, err := net.Dial("udp", "127.0.0.1:11110")
+	conn, err := net.Dial("udp", udpAddress)
 	fmt.Println("数据发送到：127.0.0.1:11110")
 	defer conn.Close()
 	if err != nil {

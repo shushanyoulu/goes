@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"os"
+
 	"github.com/garyburd/redigo/redis"
 )
 
@@ -16,7 +18,8 @@ type test struct {
 func connectRedix() redis.Conn {
 	cr, err := redis.Dial("tcp", redisAddr())
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("redis connect failed", err)
+		os.Exit(1)
 	}
 	// defer cr.Close()
 	return cr

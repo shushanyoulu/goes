@@ -21,12 +21,13 @@ type config struct {
 	AbnormalData abnormalData
 }
 type basic struct {
-	Cpus        int
-	SynchTime   int
-	GoWorkGroup int
-	PutToEsBuff int
-	Debug       bool
-	DataSource  string
+	Cpus            int
+	SynchTime       int
+	GoWorkGroup     int
+	PutToEsBuff     int
+	Debug           bool
+	DataSource      string
+	WarningDataPush string
 }
 type mysql struct {
 	Hostname       string
@@ -116,6 +117,12 @@ func configDataSource() string {
 		fmt.Println(err)
 	}
 	return configStruct.Basic.DataSource
+}
+func configWarningDataPush() string {
+	if _, err := toml.DecodeFile(configPath, &configStruct); err != nil {
+		fmt.Println(err)
+	}
+	return configStruct.Basic.WarningDataPush
 }
 
 // 数据库链接配置
