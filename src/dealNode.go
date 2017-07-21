@@ -90,7 +90,7 @@ func (nd nodeLogData) classifyNodeLog(eUID map[string]int) {
 // 将warning数据发送给外部处理模块
 func sendDataToOther(nd nodeLogData) {
 	conn, err := net.Dial("udp", udpAddress)
-	fmt.Println("数据发送到：127.0.0.1:11110")
+	fmt.Println("数据发送到:", udpAddress)
 	defer conn.Close()
 	if err != nil {
 		fmt.Println(err)
