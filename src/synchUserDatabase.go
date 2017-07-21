@@ -1,12 +1,12 @@
-package main 
+package main
 
-import (
-	"fmt"
-)
+// import (
+// 	"fmt"
+// )
 
-func readUserMysql() {
-    fmt.Printf("connent userMysqlAddr info:%v",userMysqlAddr)
-}
-func writeLogMysql() {
-    fmt.Printf("connet mysql info:%v",logMysqlAddr)
-}
+// func readUserMysql() {
+//     fmt.Printf("connent userMysqlAddr info:%v",userMysqlAddr)
+// }
+// func writeLogMysql() {
+//     fmt.Printf("connet mysql info:%v",logMysqlAddr)
+// }
